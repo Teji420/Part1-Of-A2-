@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Fundraiser</title>
+</head>
+<body>
+    <h1>Search Fundraiser by ID</h1>
+    
+    <label>ID: </label>
+    <input type="text" id="txtID" placeholder="Enter ID" required>
+    <input type="button" value="Search" onclick="let txtID=document.getElementById('txtID').value; searchByID(txtID);">
+    
+    <div id="data"></div>
+
+    <script>
+        function searchByID(id) {
+            fetch(`http://localhost:8080/api/fundraiser/${id}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const dataDiv = document.getElementById('data');
+                    dataDiv.innerHTML = ""; // Clear previous data
+
+                    if (data) {
+                        const newP = document.createElement("p");
+                        newP.textContent = `Fundraiser: ${data.organizer_name}, Description: ${data.description}, City: ${data.city}`;
+                        dataDiv.appendChild(newP);
+                    } else {
+                        dataDiv.textContent = "No fundraiser data found.";
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching data:", error);
+                    document.getElementById('data').textContent = "Failed to load data.";
+                });
+        }
+    </script>
+</body>
+</html>
